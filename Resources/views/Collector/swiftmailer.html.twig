@@ -69,26 +69,44 @@
             <ul class="alt">
                 {% for message in collector.messages(name) %}
                     <li class="{{ cycle(['odd', 'even'], loop.index) }}">
-                        {% for header in message.headers.all %}
-                            <pre>{{ header }}</pre>
-                        {% endfor %}
-                        <pre>
-                            {%- if messagePart.charset is defined and message.charset %}
-                                {{- message.body|e('html', message.charset)|convert_encoding('UTF-8', message.charset) }}
-                            {%- else %}
-                                {{- message.body|e('html') }}
-                            {%- endif -%}
-                        </pre>
-                        {% for messagePart in message.children if messagePart.contentType == 'text/plain' or messagePart.contentType == 'text/html' %}
-                            <h4>Alternative part</h4>
-                            <pre>
-                                {%- if messagePart.charset %}
-                                    {{- messagePart.body|e('html', messagePart.charset)|convert_encoding('UTF-8', messagePart.charset) }}
-                                {%- else %}
-                                    {{- messagePart.body|e('html') }}
-                                {%- endif -%}
-                            </pre>
-                        {% endfor %}
+                        <ul>
+                            <li>
+                                <em>Preview</em>
+                                <div>
+                                    Subject: {{ message.subject }}<br>
+                                    From: {% for email, name in message.from %}{{ name }} &lt;{{ email }}&gt;{% endfor %}<br>
+                                    To: {% for email, name in message.to %}{{ name }} &lt;{{ email }}&gt;{% endfor %}<br>
+
+                                    {{ message.body|raw }}
+                                </div>
+                            </li>
+                            <li>
+                                <em>Source</em>
+                                <div>
+                                    <pre>{{ message }}</pre>
+                                </div>
+                                {#{% for header in message.headers.all %}#}
+                                    {#<pre>{{ header }}</pre>#}
+                                {#{% endfor %}#}
+                                {#<pre>#}
+                                    {#{%- if messagePart.charset is defined and message.charset %}#}
+                                        {#{{- message.body|e('html', message.charset)|convert_encoding('UTF-8', message.charset) }}#}
+                                    {#{%- else %}#}
+                                        {#{{- message.body|e('html') }}#}
+                                    {#{%- endif -%}#}
+                                {#</pre>#}
+                                {#{% for messagePart in message.children if messagePart.contentType == 'text/plain' or messagePart.contentType == 'text/html' %}#}
+                                    {#<h4>Alternative part</h4>#}
+                                    {#<pre>#}
+                                        {#{%- if messagePart.charset %}#}
+                                            {#{{- messagePart.body|e('html', messagePart.charset)|convert_encoding('UTF-8', messagePart.charset) }}#}
+                                        {#{%- else %}#}
+                                            {#{{- messagePart.body|e('html') }}#}
+                                        {#{%- endif -%}#}
+                                    {#</pre>#}
+                                {#{% endfor %}#}
+                            </li>
+                        </ul>
                     </li>
                 {% endfor %}
             </ul>
